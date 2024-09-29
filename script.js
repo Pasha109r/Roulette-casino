@@ -1,5 +1,6 @@
 let roueletteTable = {
-	bet: null,
+	account: 100,
+	bet: new Set(),
 	color:{red: 'КРАСНОЕ', black: 'ЧЕРНОЕ'},
 	cells: [
 		{ number: 0, color: null },
@@ -50,8 +51,19 @@ let roueletteTable = {
 			console.warn('Нельзя сделать ставку на не существующее число!');
 			return;
 		}
-		this.bet = number;
-		console.info('СТАВКА НА'+ number + '!');
+		if (this.account === 0) {
+			console.warn('Мне жаль но у вас закончились деньги на счету!');
+			return;
+		}
+		if (!this.bet.has(number)) {
+			this.account--;
+			this.bet.add(number);
+			console.info('СТАВКА НА'+' ' + number + '!');
+		}
+		else {
+			console.info('СТАВКА НА'+' ' + number + 'УЖЕ БЫЛА СДЕЛАНА');
+		}
+		
 	},
 
 	spin: function () {
@@ -59,15 +71,27 @@ let roueletteTable = {
 			console.warn('СДЕЛАЙ СТАВКУ!');
 			return;
 		}
-		let result = this.get();
-		console.info('ВЫПАЛО'+' '+ result.number + ' ' + this.color[result.color])
 
-		if (result.number === this.bet) {
-			console.info('ВЫИГРЫШ!!!');
-		}
-		else {
-			console.info('ПРОИГРЫШ!');
-		}
-		this.bet = null;
-	}
+		let result = this.get();
+
+		console.info('ВЫПАЛО' + ' ' + result.number + ' ' + this.color[result.color]);
+
+		this._check(result);
+
+		this.bet.clear();
+	},
+	_check: function (result) {
+		this.bet.forEach((v) => {
+			if (result.number === v) {
+				console.info('ВЫИГРЫШ !!!');
+				this.account += 36;
+			}
+			else {
+				console.info('ПРОИГРЫШ!');
+			}
+		});	
+	},
+	showAccount: function () {
+		console.info('На счету осталось' + this.account);
+	},
 }
