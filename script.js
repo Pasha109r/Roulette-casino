@@ -41,6 +41,20 @@ let roueletteTable = {
 		{ number: 35, color: 'black' },
 		{ number: 36, color: 'red' },
 	],
+	generate: function () {
+		let numbersBlock = document.querySelector('.numbers-block');
+		if (!numbersBlock) {
+			return;
+		}
+		for (let i = 1; i < this.cells.length; i++){
+			let cell = document.createElement('div');
+			cell.className = 'number color' + this.cells[i].color;
+			cell.innerText = this.cells[i].number;
+
+			numbersBlock.appendChild(cell);
+
+		}
+	},
 
 	get: function () {
 		return this.cells[Math.round(Math.random() * 36)];
@@ -99,3 +113,7 @@ let roueletteTable = {
 		console.info('На счету осталось' + this.account);
 	},
 }
+
+window.addEventListener('load', function () {
+	roueletteTable.generate();
+})
