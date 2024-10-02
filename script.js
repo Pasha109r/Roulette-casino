@@ -67,7 +67,7 @@ let roueletteTable = {
 	},
 
 	spin: function () {
-		if (this.bet === null) {
+		if (this.bet.size === 0) {
 			console.warn('СДЕЛАЙ СТАВКУ!');
 			return;
 		}
@@ -81,15 +81,19 @@ let roueletteTable = {
 		this.bet.clear();
 	},
 	_check: function (result) {
+		let win = false;
 		this.bet.forEach((v) => {
 			if (result.number === v) {
 				console.info('ВЫИГРЫШ !!!');
 				this.account += 36;
-			}
-			else {
-				console.info('ПРОИГРЫШ!');
+				
 			}
 		});	
+		if (!win) {
+			console.info('ПРОИГРЫШ!');
+			
+		}
+		this.showAccount();
 	},
 	showAccount: function () {
 		console.info('На счету осталось' + this.account);
