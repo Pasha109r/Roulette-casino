@@ -48,19 +48,53 @@ let roueletteTable = {
 		}
 		for (let i = 1; i < this.cells.length; i++){
 			let cell = document.createElement('div');
-			cell.className = 'number color' + this.cells[i].color;
+			cell.className = 'number color-' + this.cells[i].color;
 			cell.innerText = this.cells[i].number;
 
 			numbersBlock.appendChild(cell);
 
 		}
 	},
+	bindHandlers: function () {
+		
+		let start = document.querySelector('.start');
+
+		start.addEventListener('click', function () {
+			roueletteTable.spin();
+		});
+
+		let reset = document.querySelector('.reset');
+		
+		reset.addEventListener('click', function () {
+			roueletteTable.account = 100;
+			roueletteTable.bet.clear();
+
+			console.log('Игра началась заново' + ' ' + 'ваш счет = ' + roueletteTable.account);
+		});
+		let clickZero = document.querySelector('.zero');
+		clickZero.addEventListener('click', function (event) {
+			roueletteTable.makeBet(0);
+		});
+
+		$('[class="number color-red"]').on('click', function (event) {
+			
+			let numberRed = event.targret.innerText;
+			let num = Number(numberRed);
+			roueletteTable.makeBet(num, 'red');
+		});
+
+		$('[class="nuber color-black"]').on('click', function (event) {
+			let numberBlack = event.targret.innerText;
+			let numBlack = Number(numberBlack);
+			roueletteTable.makeBet(numBlack, 'black');
+		});
+	},
 
 	get: function () {
 		return this.cells[Math.round(Math.random() * 36)];
 	},
 
-	makeBet: function (number) {
+	makeBet: function (number, color) {
 		if (number > 36 || number < 0) {
 			console.warn('Нельзя сделать ставку на не существующее число!');
 			return;
@@ -72,6 +106,8 @@ let roueletteTable = {
 		if (!this.bet.has(number)) {
 			this.account--;
 			this.bet.add(number);
+			this.showAccount();
+			this._renderBet(number, color);
 			console.info('СТАВКА НА'+' ' + number + '!');
 		}
 		else {
@@ -109,11 +145,31 @@ let roueletteTable = {
 		}
 		this.showAccount();
 	},
+	_renderBet: function (number, color) {
+		let ul = document.querySelector('.info-bet-list');
+		let li = document.createElement('li');
+			className = 'info-bet-list-item';
+		li.innerText = number;
+		
+
+		switch (color) {
+			case 'black': case 'red':
+				className += 'color-' + color;
+				break;
+			default:
+				className += 'color-green';
+		}
+		li.className = className;
+		ul.appendChild(li);
+	 },
+
+	_cleanBet: function(){},
+
 	showAccount: function () {
-		console.info('На счету осталось' + this.account);
+		document.querySelector('#account-value').innerText= this.account;
 	},
 }
 
 window.addEventListener('load', function () {
 	roueletteTable.generate();
-})
+});
